@@ -22,7 +22,7 @@ namespace WebAddressBookTests
         public void SetupTest()
         {
             driver = new FirefoxDriver();
-            baseURL = "http://localhost:8080/addressbook/";
+            baseURL = "http://localhost:8080";
             verificationErrors = new StringBuilder();
         }
 
@@ -43,29 +43,72 @@ namespace WebAddressBookTests
         [Test]
         public void GroupCreationTest()
         {
-            driver.Navigate().GoToUrl(baseURL);
+            OpenHomePage();
+            Login("admin","secret");
+            GoToGroupsPage();
+            InintGroupCreation();
+            FillGroupCreationForm("name group","header group","footer group");
+            SubmitGroupCreation();
+            ReturnToGroupsPage();
+            Logout();
+        }
+
+        private void Logout()
+        {
+            driver.FindElement(By.LinkText("Logout")).Click();
+        }
+
+        private void ReturnToGroupsPage()
+        {
+            driver.FindElement(By.LinkText("groups")).Click();
+        }
+
+        private void SubmitGroupCreation()
+        {
+            driver.FindElement(By.Name("submit")).Click();
+        }
+
+        private void FillGroupCreationForm(string group_name,string group_header,string group_footer)
+        {
+            driver.FindElement(By.Name("group_name")).Click();
+            driver.FindElement(By.Name("group_name")).Clear();
+            driver.FindElement(By.Name("group_name")).SendKeys(group_name);
+            driver.FindElement(By.Name("group_header")).Click();
+            driver.FindElement(By.Name("group_header")).Clear();
+            driver.FindElement(By.Name("group_header")).SendKeys(group_header);
+            driver.FindElement(By.Name("group_footer")).Click();
+            driver.FindElement(By.Name("group_footer")).Clear();
+            driver.FindElement(By.Name("group_footer")).SendKeys(group_footer);
+        }
+
+        private void InintGroupCreation()
+        {
+            driver.FindElement(By.Name("new")).Click();
+        }
+
+        private void GoToGroupsPage()
+        {
+            driver.FindElement(By.LinkText("groups")).Click();
+        }
+
+        private void Login(
+            String user,
+            String password)
+        {
             driver.FindElement(By.Id("LoginForm")).Click();
             driver.FindElement(By.Name("user")).Click();
             driver.FindElement(By.CssSelector("input[name=\"user\"]")).Clear();
-            driver.FindElement(By.CssSelector("input[name=\"user\"]")).SendKeys("admin");
+            driver.FindElement(By.CssSelector("input[name=\"user\"]")).SendKeys(user);
             driver.FindElement(By.CssSelector("input[name=\"pass\"]")).Clear();
-            driver.FindElement(By.CssSelector("input[name=\"pass\"]")).SendKeys("secret");
+            driver.FindElement(By.CssSelector("input[name=\"pass\"]")).SendKeys(password);
             driver.FindElement(By.XPath("//input[@value='Login']")).Click();
-            driver.FindElement(By.LinkText("groups")).Click();
-            driver.FindElement(By.Name("new")).Click();
-            driver.FindElement(By.Name("group_name")).Click();
-            driver.FindElement(By.Name("group_name")).Clear();
-            driver.FindElement(By.Name("group_name")).SendKeys("4");
-            driver.FindElement(By.Name("group_header")).Click();
-            driver.FindElement(By.Name("group_header")).Clear();
-            driver.FindElement(By.Name("group_header")).SendKeys("4");
-            driver.FindElement(By.Name("group_footer")).Click();
-            driver.FindElement(By.Name("group_footer")).Clear();
-            driver.FindElement(By.Name("group_footer")).SendKeys("d");
-            driver.FindElement(By.Name("submit")).Click();
-            driver.FindElement(By.LinkText("groups")).Click();
-            driver.FindElement(By.LinkText("Logout")).Click();
         }
+
+        private void OpenHomePage()
+        {
+            driver.Navigate().GoToUrl(baseURL + "/addressbook/");
+        }
+
         private bool IsElementPresent(By by)
         {
             try
